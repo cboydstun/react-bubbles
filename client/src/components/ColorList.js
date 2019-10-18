@@ -1,13 +1,18 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { connect } from "react-redux";
+import {
+  deleteColor,
+  saveEdit,
+  createColors,
+  getColors
+} from "../actions/actions";
 
 const initialColor = {
   color: "",
   code: { hex: "" }
 };
 
-const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
+const ColorList = props => {
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -16,38 +21,39 @@ const ColorList = ({ colors, updateColors }) => {
     setColorToEdit(color);
   };
 
-  const saveEdit = e => {
-    e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
-  };
-
-  const deleteColor = color => {
-    // make a delete request to delete this color
-  };
-
   return (
     <div className="colors-wrap">
       <p>colors</p>
       <ul>
-        {colors.map(color => (
-          <li key={color.color} onClick={() => editColor(color)}>
-            <span>
-              <span className="delete" onClick={() => deleteColor(color)}>
+        {props.colors.map(color => {
+          return (
+            <li key={color.color}>
+              <span
+                className="delete"
+                onClick={async () => {
+                  props.deleteColor(color.id);
+                  setTimeout(function() {
+                    props.getColors();
+                  }, 50);
+                }}
+              >
                 x
-              </span>{" "}
-              {color.color}
-            </span>
-            <div
-              className="color-box"
-              style={{ backgroundColor: color.code.hex }}
-            />
-          </li>
-        ))}
+              </span>
+              <span onClick={() => editColor(color)}>
+                <span>{"    " + color.color}</span>
+              </span>
+              <div
+                onClick={() => editColor(color)}
+                className="color-box"
+                style={{ backgroundColor: color.code.hex }}
+              />
+            </li>
+          );
+        })}
       </ul>
+      {console.log("Colortoedit", colorToEdit)}
       {editing && (
-        <form onSubmit={saveEdit}>
+        <form onSubmit={() => props.saveEdit(colorToEdit.id, colorToEdit)}>
           <legend>edit color</legend>
           <label>
             color name:
@@ -76,10 +82,41 @@ const ColorList = ({ colors, updateColors }) => {
           </div>
         </form>
       )}
-      <div className="spacer" />
-      {/* stretch - build another form here to add a color */}
+
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          return props.createColors({
+            id: Date.now(),
+            color: document.getElementById("id").value,
+            code: { hex: document.getElementById("hex").value }
+          });
+        }}
+      >
+        <legend>Add color</legend>
+        <label>
+          color name:
+          <input id="id" type="text" />
+        </label>
+        <label>
+          hex code:
+          <input id="hex" type="text" />
+        </label>
+        <div className="button-row">
+          <button type="submit">add</button>
+        </div>
+      </form>
     </div>
   );
 };
 
-export default ColorList;
+const mapStateToProps = state => {
+  return {
+    colors: state.colors
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { saveEdit, deleteColor, createColors, getColors }
+)(ColorList);

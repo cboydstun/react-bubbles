@@ -3,21 +3,33 @@
 html,
 body,
 #root,
-.App {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
+// .App {
+//   width: 100%;
+//   height: 100%;
+//   margin: 0;
+//   padding: 0;
+// }
 
 .App {
   font-family: "Montserrat", sans-serif;
   text-align: center;
+  align-items: center;
+  //background-image: url('https://htmlcolorcodes.com/assets/images/color-picker/html-color-codes-color-wheel-analogous-thumb-43afde7d.png');
+  // background-repeat: no-repeat;
+  // background-position: center;
+  // background-attachment: fixed;
+
   display: flex;
+  margin-left: auto;
+  margin-right: auto;
 
   svg {
     height: 100%;
   }
+}
+
+.loginForm {
+  font-size: 200px;
 }
 
 .spacer {

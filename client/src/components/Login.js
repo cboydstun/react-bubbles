@@ -1,14 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { getInitialData } from "../actions/actions";
 
-const Login = () => {
-  // make a post request to retrieve a token from the api
-  // when you have handled the token, navigate to the BubblePage route
+
+const Login = props => {
+  const [credentials, setCredentials] = useState({});
+
+  const login = e => {
+    e.preventDefault();
+    props.getInitialData(credentials, props.history);
+  };
+
+  const handleChange = e => {
+    setCredentials({
+      ...credentials,
+      [e.target.name]: e.target.value
+    });
+  };
+
   return (
-    <>
+    <div>
       <h1>Welcome to the Bubble App!</h1>
-      <p>Build a login page here</p>
-    </>
+      <form className="loginForm" onSubmit={login}>
+        <input
+          type="text"
+          name="username"
+          value={credentials.username}
+          onChange={handleChange}
+        />
+        <input
+          type="password"
+          name="password"
+          value={credentials.password}
+          onChange={handleChange}
+        />
+        <button>Log in</button>
+      </form>
+      <br />
+      <br />
+      <br />
+      <br />
+      <p>Username: Lambda School</p>
+      <p>Password: LambdaBubbles</p>
+
+    </div>
   );
 };
 
-export default Login;
+export default connect(
+  null,
+  { getInitialData }
+)(Login);
